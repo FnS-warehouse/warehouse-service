@@ -15,6 +15,7 @@
     <module>warehouse-dataaccess</module>
     <module>warehouse-messaging</module>
     <module>warehouse-domain</module>
+    <module>common</module>
   </modules>
 
   <properties>
