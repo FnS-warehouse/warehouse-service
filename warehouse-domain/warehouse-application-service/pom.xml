@@ -7,16 +7,13 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>warehouse-domain-core</artifactId>
-    <packaging>jar</packaging>
-
-    <name>warehouse-domain-core</name>
-    <url>http://maven.apache.org</url>
+    <artifactId>warehouse-application-service</artifactId>
+    <name>warehouse-application-service</name>
 
     <dependencies>
         <dependency>
             <groupId>com.fns</groupId>
-            <artifactId>common-domain</artifactId>
+            <artifactId>warehouse-domain-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fns</groupId>
