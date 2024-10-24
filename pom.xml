@@ -15,7 +15,10 @@
     <module>common</module>
     <module>warehouse-domain</module>
     <module>infrastructure</module>
-    <module>infrastructure/kafka</module>
+    <module>warehouse-messaging</module>
+    <module>warehouse-container</module>
+    <module>warehouse-application</module>
+    <module>warehouse-dataaccess</module>
   </modules>
 
   <dependencyManagement>
@@ -50,7 +53,6 @@
         <artifactId>warehouse-dataaccess</artifactId>
         <version>${project.version}</version>
       </dependency>
-
       <dependency>
         <groupId>com.fns</groupId>
         <artifactId>warehouse-messaging</artifactId>
@@ -58,11 +60,20 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.github.ferstl</groupId>
+        <artifactId>depgraph-maven-plugin</artifactId>
+        <version>4.0.3</version>
+        <configuration>
+<!--          <graphFormat>dot</graphFormat>-->
+<!--          <showGroupIds>false</showGroupIds>-->
+<!--          <showVersions>false</showVersions>-->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
 </project>
-        <!--    <dependency>-->
-<!--      <groupId>junit</groupId>-->
-<!--      <artifactId>junit</artifactId>-->
-<!--      <version>3.8.1</version>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
-<!--  </dependencies>-->

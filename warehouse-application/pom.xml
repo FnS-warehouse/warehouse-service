@@ -1,39 +1,3 @@
-<!--<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
-<!--         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">-->
-<!--    <modelVersion>4.0.0</modelVersion>-->
-<!--    <parent>-->
-<!--        <groupId>com.fns</groupId>-->
-<!--        <artifactId>warehouse-service</artifactId>-->
-<!--        <version>1.0-SNAPSHOT</version>-->
-<!--    </parent>-->
-
-<!--    <artifactId>warehouse-application</artifactId>-->
-<!--    <version>1.0-SNAPSHOT</version>-->
-<!--    <packaging>jar</packaging>-->
-
-<!--    <name>warehouse-application</name>-->
-<!--    <url>http://maven.apache.org</url>-->
-
-<!--    <properties>-->
-<!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
-<!--    </properties>-->
-
-<!--    <modules>-->
-<!--        <module>warehouse-application</module>-->
-<!--        <module>warehouse-dataccess</module>-->
-<!--        &lt;!&ndash; other modules &ndash;&gt;-->
-<!--    </modules>-->
-
-
-<!--    <dependencies>-->
-<!--        <dependency>-->
-<!--            <groupId>com.fns</groupId>-->
-<!--            <artifactId>warehouse-dataaccess</artifactId> &lt;!&ndash; Make sure this matches exactly &ndash;&gt;-->
-<!--            <version>${project.version}</version>-->
-<!--        </dependency>-->
-<!--    </dependencies>-->
-
-<!--</project>-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://www.w3.org/2001/04/10/xml.xsd">
@@ -43,12 +7,18 @@
         <artifactId>warehouse-service</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.fns</groupId>
 
     <artifactId>warehouse-application</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>warehouse-dataaccess</name>
+    <name>warehouse-application</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.fns</groupId>
+            <artifactId>warehouse-application-service</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
 

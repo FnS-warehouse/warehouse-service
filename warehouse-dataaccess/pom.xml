@@ -42,4 +42,11 @@
     <packaging>jar</packaging>
 
     <name>warehouse-dataaccess</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.fns</groupId>
+            <artifactId>warehouse-application-service</artifactId>
+        </dependency>
+    </dependencies>
 </project>
