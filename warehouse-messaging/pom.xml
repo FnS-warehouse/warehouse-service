@@ -22,5 +22,13 @@
             <groupId>com.fns</groupId>
             <artifactId>common-domain</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.fns</groupId>-->
+<!--            <artifactId>kafka-producer</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.fns</groupId>-->
+<!--            <artifactId>kafka-consumer</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 </project>

@@ -5,18 +5,18 @@
         <groupId>com.fns</groupId>
         <artifactId>warehouse-service</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>infrastructure</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>kafka-config-data</artifactId>
+    <packaging>jar</packaging>
 
-    <name>infrastructure</name>
+    <name>kafka-config-data</name>
+    <url>http://maven.apache.org</url>
 
-    <modules>
-        <module>kafka</module>
-    </modules>
-
-
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>

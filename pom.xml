@@ -19,6 +19,7 @@
     <module>warehouse-container</module>
     <module>warehouse-application</module>
     <module>warehouse-dataaccess</module>
+    <module>infrastructure</module>
   </modules>
 
   <dependencyManagement>
