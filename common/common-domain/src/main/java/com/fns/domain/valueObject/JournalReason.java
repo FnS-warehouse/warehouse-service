@@ -1,5 +1,5 @@
 package com.fns.domain.valueObject;
 
 public enum JournalReason {
-    RESERVED, TRANSFER
+    RESERVED, TRANSFERRED, CANCELED, CANCELING, ORDERED, ORDERING, ADDED
 }

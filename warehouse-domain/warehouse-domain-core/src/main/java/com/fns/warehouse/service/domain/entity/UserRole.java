@@ -1,63 +1,42 @@
 package com.fns.warehouse.service.domain.entity;
 
+import com.fns.domain.entity.AggregateRoot;
 import com.fns.domain.valueObject.*;
-import java.util.List;
-import java.util.UUID;
 
-public class UserRole {
+public class UserRole extends AggregateRoot<UserRoleId> {
+
     private UserRoleId roleId;
     private UserRoleType type;
-    private List<WarehouseId> assignedWarehouses;
 
-    public UserRole(UserRoleId roleId, UserRoleType type, List<WarehouseId> assignedWarehouses) {
-        this.roleId = roleId;
-        this.type = type;
-        this.assignedWarehouses = assignedWarehouses;
+    private UserRole(Builder builder) {
+        super.setId(builder.roleId);
+        this.type = builder.type;
     }
 
-    // Getters
-    public UserRoleId getRoleId() {
-        return roleId;
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public UserRoleType getType() {
-        return type;
-    }
+    public UserRoleId getRoleId() { return roleId; }
+    public UserRoleType getType() { return type; }
 
-    public List<WarehouseId> getAssignedWarehouses() {
-        return assignedWarehouses;
-    }
+    // Builder class
+    public static class Builder {
+        private UserRoleId roleId;
+        private UserRoleType type;
 
-    // Assign a warehouse to a Warehouse Admin
-    public void assignWarehouse(WarehouseId warehouseId) {
-        if (!assignedWarehouses.contains(warehouseId)) {
-            assignedWarehouses.add(warehouseId);
-        } else {
-            throw new IllegalStateException("Warehouse Admin is already assigned to this warehouse.");
+        public Builder roleId(UserRoleId roleId) {
+            this.roleId = roleId;
+            return this;
         }
-    }
 
-    // Reassign a Warehouse Admin to another warehouse
-    public void reassignWarehouse(WarehouseId oldWarehouseId, WarehouseId newWarehouseId) {
-        if (assignedWarehouses.contains(oldWarehouseId)) {
-            assignedWarehouses.remove(oldWarehouseId);
-            assignedWarehouses.add(newWarehouseId);
-        } else {
-            throw new IllegalStateException("Warehouse Admin is not assigned to the previous warehouse.");
+        public Builder type(UserRoleType type) {
+            this.type = type;
+            return this;
         }
-    }
 
-    // Remove access to a warehouse
-    public void removeWarehouseAssignment(WarehouseId warehouseId) {
-        if (assignedWarehouses.contains(warehouseId)) {
-            assignedWarehouses.remove(warehouseId);
-        } else {
-            throw new IllegalStateException("Warehouse Admin is not assigned to this warehouse.");
+        public UserRole build() {
+            return new UserRole(this);
         }
-    }
-
-    // Check if Warehouse Admin has access to a specific warehouse
-    public boolean hasAccessToWarehouse(WarehouseId warehouseId) {
-        return assignedWarehouses.contains(warehouseId);
     }
 }

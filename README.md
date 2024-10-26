@@ -9,15 +9,15 @@ Run dependency graph
 - [x] Install docker 
 - [x] Install postgres
 - [ ] Implement the domain. Implement all of those things. Just domain core and domain application service
-    - [ ] Implement the design in there
-    - [ ] Implement all of them in there every component in the design
+    - [x] Implement the design in there
+    - [x] Implement all of them in there every component in the design
     - [ ] Core domain entity
-      - [ ] Create all core domain entity logic. Builder
+      - [x] Create all core domain entity logic. Builder
       - [ ] Create Exception
       - [ ] Create core domain event 
     - [ ] Application Service with Input Output Interface
       - [ ] Create Warehouse Application Service Impl
-      - [ ] Create Inventory Warehouse Impl
+      - [ ] Create åInventory Warehouse Impl
       - [ ] Create Interface in Input
       - [ ] Crete Interface in Output 
 - [ ] Integrate with SpringBoot, Lombok, and Avro

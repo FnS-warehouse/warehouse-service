@@ -2,18 +2,20 @@ package com.fns.warehouse.service.domain.entity;
 
 import com.fns.domain.valueObject.*;
 import com.fns.domain.entity.AggregateRoot;
+import com.fns.warehouse.service.domain.valueobject.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Warehouse extends AggregateRoot<WarehouseId> {
 
     private String name;
     private Location location;
-    private List<String> failureMessages;
-    private WarehouseStatus warehouseStatus;
+    private User createdBy;
+    private List<User> warehouseAdmins;
+    private WarehouseStatus status;
 
-    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
@@ -21,96 +23,66 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         super.setId(builder.warehouseId);
         this.name = builder.name;
         this.location = builder.location;
-        this.failureMessages = builder.failureMessages;
-        this.warehouseStatus = builder.warehouseStatus;
-        this.createdAt = builder.createdAt;
-        this.updatedAt = builder.updatedAt;
-        this.deletedAt = builder.deletedAt;
-    }
-
-    // Getters
-    public String getName() {
-        return name;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public WarehouseStatus getWarehouseStatus() {
-        return warehouseStatus;
-    }
-
-    public List<String> getFailureMessages() {
-        return failureMessages;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void createWarehouse(String name, Location location) {
-        this.name = name;
-        this.location = location;
-        this.warehouseStatus = WarehouseStatus.ACTIVE;
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public void updateName(String newName) {
-        if (this.warehouseStatus != WarehouseStatus.DEACTIVE) {
-            if (newName == null || newName.trim().isEmpty()) {
-                throw new IllegalArgumentException("Name cannot be null or empty.");
-            }
-            this.name = newName;
-            this.updatedAt = LocalDateTime.now();  // Update the updatedAt timestamp
-        } else {
-            throw new IllegalStateException("Cannot update a deactivated warehouse.");
-        }
-    }
-
-    public void updateLocation(Location newLocation, UserRole userRole) {
-        if (userRole.getType() == UserRoleType.SUPER_ADMIN) {
-            this.location = newLocation;
-            this.updatedAt = LocalDateTime.now();
-        } else {
-            throw new IllegalStateException("Only Super Admins can update warehouse locations.");
-        }
-    }
-
-
-    public void deleteWarehouse() {
-        if (this.warehouseStatus != WarehouseStatus.DEACTIVE) {
-            this.warehouseStatus = WarehouseStatus.DEACTIVE;
-            this.deletedAt = LocalDateTime.now();  // set deletion time
-        } else {
-            throw new IllegalStateException("Warehouse is already deactivated.");
-        }
+        this.createdBy = builder.createdBy;
+        this.warehouseAdmins = builder.warehouseAdmins != null ? builder.warehouseAdmins : new ArrayList<>();
+        this.status = builder.status != null ? builder.status : WarehouseStatus.ACTIVE;
+        LocalDateTime createdAt = builder.createdAt != null ? builder.createdAt : LocalDateTime.now();
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public static final class Builder {
+    public void updateName(String newName, UserRole userRole) {
+        validateSuperAdmin(userRole);
+        if (newName == null || newName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty.");
+        }
+        this.name = newName;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateLocation(Location newLocation, UserRole userRole) {
+        validateSuperAdmin(userRole);
+        this.location = newLocation;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void deleteWarehouse(UserRole userRole) {
+        validateSuperAdmin(userRole);
+        this.status = WarehouseStatus.DEACTIVE;
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void assignWarehouseAdmin(User user, UserRole userRole) {
+        validateSuperAdmin(userRole);
+        if (!warehouseAdmins.contains(user)) {
+            warehouseAdmins.add(user);
+        }
+    }
+
+    private void validateSuperAdmin(UserRole userRole) {
+        if (userRole.getType() != UserRoleType.SUPER_ADMIN) {
+            throw new IllegalStateException("Only Super Admins can perform this action.");
+        }
+    }
+
+    // Getters
+    public String getName() { return name; }
+    public Location getLocation() { return location; }
+    public WarehouseStatus getStatus() { return status; }
+    public List<User> getWarehouseAdmins() { return warehouseAdmins; }
+
+    // Builder class
+    public static class Builder {
         private WarehouseId warehouseId;
         private String name;
         private Location location;
-        private List<String> failureMessages;
-        private WarehouseStatus warehouseStatus;
+        private User createdBy;
+        private List<User> warehouseAdmins;
+        private WarehouseStatus status;
         private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
         private LocalDateTime deletedAt;
-
-        private Builder() {
-        }
 
         public Builder warehouseId(WarehouseId warehouseId) {
             this.warehouseId = warehouseId;
@@ -127,13 +99,18 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
             return this;
         }
 
-        public Builder failureMessages(List<String> failureMessages) {
-            this.failureMessages = failureMessages;
+        public Builder createdBy(User createdBy) {
+            this.createdBy = createdBy;
             return this;
         }
 
-        public Builder warehouseStatus(WarehouseStatus warehouseStatus) {
-            this.warehouseStatus = warehouseStatus;
+        public Builder warehouseAdmins(List<User> warehouseAdmins) {
+            this.warehouseAdmins = warehouseAdmins;
+            return this;
+        }
+
+        public Builder status(WarehouseStatus status) {
+            this.status = status;
             return this;
         }
 
@@ -143,7 +120,6 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         }
 
         public Builder updatedAt(LocalDateTime updatedAt) {
-            this.updatedAt = updatedAt;
             return this;
         }
 
@@ -156,5 +132,4 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
             return new Warehouse(this);
         }
     }
-
 }
