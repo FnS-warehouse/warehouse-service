@@ -16,6 +16,7 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
     private List<User> warehouseAdmins;
     private WarehouseStatus status;
 
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
@@ -31,6 +32,19 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public void deactivateWarehouse(UserRole userRole) {
+        validateSuperAdmin(userRole);
+        this.status = WarehouseStatus.DEACTIVE;
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void initializeWarehouse(User creator) {
+        this.createdBy = creator;
+        this.status = WarehouseStatus.ACTIVE;
+        this.createdAt = LocalDateTime.now();
+        this.warehouseAdmins = new ArrayList<>();
     }
 
     public void updateName(String newName, UserRole userRole) {
@@ -54,12 +68,13 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         this.deletedAt = LocalDateTime.now();
     }
 
-    public void assignWarehouseAdmin(User user, UserRole userRole) {
+    public void assignAdmin(User user, UserRole userRole) {
         validateSuperAdmin(userRole);
         if (!warehouseAdmins.contains(user)) {
             warehouseAdmins.add(user);
         }
     }
+
 
     private void validateSuperAdmin(UserRole userRole) {
         if (userRole.getType() != UserRoleType.SUPER_ADMIN) {
@@ -67,7 +82,6 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         }
     }
 
-    // Getters
     public String getName() { return name; }
     public Location getLocation() { return location; }
     public WarehouseStatus getStatus() { return status; }

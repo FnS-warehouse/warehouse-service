@@ -3,6 +3,8 @@ package com.fns.warehouse.service.domain.entity;
 import com.fns.domain.entity.*;
 import com.fns.domain.valueObject.*;
 
+import java.time.LocalDateTime;
+
 public class Inventory extends AggregateRoot<InventoryId> {
 
     private WarehouseId warehouseId;
@@ -10,6 +12,10 @@ public class Inventory extends AggregateRoot<InventoryId> {
     private int totalQuantity;
     private int reservedQuantity;
     private int availableQuantity;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime deletedAt;
 
     private Inventory(Builder builder) {
         super.setId(builder.inventoryId);
@@ -65,6 +71,10 @@ public class Inventory extends AggregateRoot<InventoryId> {
         if (userRole.getType() != UserRoleType.WH_ADMIN && userRole.getType() != UserRoleType.SUPER_ADMIN) {
             throw new IllegalStateException("Only Admins and Super Admins can modify stock.");
         }
+    }
+
+    public void initializeInventory() {
+        this.createdAt = LocalDateTime.now();
     }
 
     private void createJournalEntry(int qtyChange, String reason) {

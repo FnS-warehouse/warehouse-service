@@ -1,10 +1,10 @@
 package com.fns.warehouse.service.domain.entity;
 
-import com.fns.domain.entity.AggregateRoot;
+import com.fns.domain.entity.*;
 import com.fns.domain.valueObject.*;
 import java.time.LocalDateTime;
 
-public class InventoryTransfer extends AggregateRoot<InventoryTransferId> {
+public class InventoryTransfer extends BaseEntity<InventoryTransferId> {
 
     private InventoryTransferId transferId;
     private InventoryId inventoryId;

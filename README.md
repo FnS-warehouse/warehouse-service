@@ -11,15 +11,15 @@ Run dependency graph
 - [ ] Implement the domain. Implement all of those things. Just domain core and domain application service
     - [x] Implement the design in there
     - [x] Implement all of them in there every component in the design
-    - [ ] Core domain entity
+    - [x] Core domain entity
       - [x] Create all core domain entity logic. Builder
       - [ ] Create Exception
-      - [ ] Create core domain event 
-    - [ ] Application Service with Input Output Interface
-      - [ ] Create Warehouse Application Service Impl
-      - [ ] Create åInventory Warehouse Impl
-      - [ ] Create Interface in Input
-      - [ ] Crete Interface in Output 
+      - [x] Create core domain event 
+    - [x] Domain Service with Implementation
+      - [x] Create Warehouse Domain Service Impl
+      - [x] Create Inventory Domain Service Impl
+      - [x] Create Interface in Warehouse Domain
+      - [x] Crete Interface in Inventory Domain
 - [ ] Integrate with SpringBoot, Lombok, and Avro
   - [ ] Learning Basic Spring
   - [ ] Implement Basic Spring in this project

@@ -1,9 +1,9 @@
 package com.fns.warehouse.service.domain.entity;
 
-import com.fns.domain.entity.AggregateRoot;
+import com.fns.domain.entity.*;
 import com.fns.domain.valueObject.*;
 
-public class User extends AggregateRoot<UserId> {
+public class User extends BaseEntity<UserId> {
 
     private UserId userId;
     private String name;

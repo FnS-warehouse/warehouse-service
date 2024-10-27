@@ -1,10 +1,10 @@
 package com.fns.warehouse.service.domain.entity;
 
-import com.fns.domain.entity.AggregateRoot;
+import com.fns.domain.entity.*;
 import com.fns.domain.valueObject.*;
 import java.math.BigDecimal;
 
-public class Product extends AggregateRoot<ProductId> {
+public class Product extends BaseEntity<ProductId> {
 
     private ProductId productId;
     private String name;
