@@ -8,7 +8,7 @@ Run dependency graph
 - [x] Register GCP
 - [x] Install docker 
 - [x] Install postgres
-- [ ] Implement the domain. Implement all of those things. Just domain core and domain application service
+- [x] Implement the domain. Implement all of those things. Just domain core and domain application service
     - [x] Implement the design in there
     - [x] Implement all of them in there every component in the design
     - [x] Core domain entity
@@ -21,6 +21,9 @@ Run dependency graph
       - [x] Create Interface in Warehouse Domain
       - [x] Crete Interface in Inventory Domain
 - [ ] Integrate with SpringBoot, Lombok, and Avro
+  - [x] Install Spring
+  - [x] Install Lombok
+  - [ ] Install Avro
   - [ ] Learning Basic Spring
   - [ ] Implement Basic Spring in this project
   - [ ] Learning Lombok
