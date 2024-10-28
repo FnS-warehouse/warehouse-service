@@ -2,18 +2,19 @@ package com.fns.warehouse.service.domain.entity;
 
 import com.fns.domain.entity.*;
 import com.fns.domain.valueObject.*;
+import com.fns.warehouse.service.domain.exception.InsufficientQuantityException;
 
 import java.time.LocalDateTime;
 
 public class Inventory extends AggregateRoot<InventoryId> {
 
-    private WarehouseId warehouseId;
-    private ProductId productId;
+    private final WarehouseId warehouseId;
+    private final ProductId productId;
     private int totalQuantity;
     private int reservedQuantity;
     private int availableQuantity;
 
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
@@ -24,81 +25,110 @@ public class Inventory extends AggregateRoot<InventoryId> {
         this.totalQuantity = builder.totalQuantity;
         this.reservedQuantity = builder.reservedQuantity;
         this.availableQuantity = builder.availableQuantity;
+        this.createdAt = builder.createdAt != null ? builder.createdAt : LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        validateInvariants();
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public void addTotalQty(int qty, UserRole userRole) {
-        validateAdminPermissions(userRole);
+    public void increaseQty(int qty) {
+        if (qty < 0) {
+            throw new IllegalArgumentException("Quantity to increase must be non-negative.");
+        }
         this.totalQuantity += qty;
         this.availableQuantity += qty;
-        createJournalEntry(qty, "Addition");
+        updateTimestamp();
+        createJournalEntry(qty, JournalReason.ADDED);
     }
 
-    public void reduceTotalQty(int qty, UserRole userRole) {
-        validateAdminPermissions(userRole);
+    public void reduceQty(int qty) {
+        if (qty < 0) {
+            throw new IllegalArgumentException("Quantity to reduce must be non-negative.");
+        }
         if (qty > this.availableQuantity) {
-            throw new IllegalArgumentException("Not enough available quantity to reduce.");
+            throw new InsufficientQuantityException("Not enough available quantity to reduce.");
         }
         this.totalQuantity -= qty;
         this.availableQuantity -= qty;
-        createJournalEntry(-qty, "Reduction");
+        updateTimestamp();
+        createJournalEntry(qty, JournalReason.REDUCED);
     }
 
-    public void addReservedQty(int qty, UserRole userRole) {
-        validateAdminPermissions(userRole);
+    public void reserve(int qty) {
+        if (qty < 0) {
+            throw new IllegalArgumentException("Quantity to reserve must be non-negative.");
+        }
         if (qty > this.availableQuantity) {
-            throw new IllegalArgumentException("Not enough available quantity to reserve.");
+            throw new InsufficientQuantityException("Not enough available quantity to reserve.");
         }
         this.reservedQuantity += qty;
         this.availableQuantity -= qty;
-        createJournalEntry(qty, "Reserve");
+        updateTimestamp();
+        createJournalEntry(qty, JournalReason.RESERVED);
     }
 
-    public void reduceReservedQty(int qty, UserRole userRole) {
-        validateAdminPermissions(userRole);
+    public void finalizeReservation(int qty, JournalReason reason) {
+        if (qty < 0) {
+            throw new IllegalArgumentException("Quantity to finalize reservation must be non-negative.");
+        }
         if (qty > this.reservedQuantity) {
-            throw new IllegalArgumentException("Not enough reserved quantity to release.");
+            throw new InsufficientQuantityException("Not enough reserved quantity to finalize.");
+        }
+        this.reservedQuantity -= qty;
+        this.totalQuantity -= qty;
+        updateTimestamp();
+        createJournalEntry(qty, reason);
+    }
+
+    public void cancel(int qty) {
+        if (qty < 0) {
+            throw new IllegalArgumentException("Quantity to cancel must be non-negative.");
+        }
+        if (qty > this.reservedQuantity) {
+            throw new InsufficientQuantityException("Not enough reserved quantity to release.");
         }
         this.reservedQuantity -= qty;
         this.availableQuantity += qty;
-        createJournalEntry(-qty, "Release Reserve");
+        updateTimestamp();
+        createJournalEntry(qty, JournalReason.CANCELED);
+
     }
 
-    private void validateAdminPermissions(UserRole userRole) {
-        if (userRole.getType() != UserRoleType.WH_ADMIN && userRole.getType() != UserRoleType.SUPER_ADMIN) {
-            throw new IllegalStateException("Only Admins and Super Admins can modify stock.");
+    private void updateTimestamp() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    private void validateInvariants() {
+        if (this.totalQuantity != this.reservedQuantity + this.availableQuantity) {
+            throw new IllegalStateException("Total quantity must equal reserved plus available quantity.");
         }
     }
 
-    public void initializeInventory() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    private void createJournalEntry(int qtyChange, String reason) {
+    private void createJournalEntry(int qtyChange, JournalReason reason) {
         InventoryJournal journalEntry = InventoryJournal.builder()
                 .inventoryId(this.getId())
                 .totalQuantity(this.totalQuantity)
                 .reservedQuantity(this.reservedQuantity)
                 .availableQuantity(this.availableQuantity)
-                .reason(JournalReason.valueOf(reason))
+                .reason(reason)
                 .build();
         journalEntry.addJournal();
     }
 
-    public boolean isAuthorizedWarehouseAdmin(WarehouseId warehouseId, UserRole userRole) {
-        return userRole.getType() == UserRoleType.WH_ADMIN && this.warehouseId.equals(warehouseId);
-    }
-
+    // Getters
     public WarehouseId getWarehouseId() { return warehouseId; }
     public ProductId getProductId() { return productId; }
     public int getTotalQuantity() { return totalQuantity; }
     public int getReservedQuantity() { return reservedQuantity; }
     public int getAvailableQuantity() { return availableQuantity; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public LocalDateTime getDeletedAt() { return deletedAt; }
 
-    // Builder class
+    // Builder class with validation
     public static class Builder {
         private InventoryId inventoryId;
         private WarehouseId warehouseId;
@@ -106,6 +136,7 @@ public class Inventory extends AggregateRoot<InventoryId> {
         private int totalQuantity;
         private int reservedQuantity;
         private int availableQuantity;
+        private LocalDateTime createdAt;
 
         public Builder inventoryId(InventoryId inventoryId) {
             this.inventoryId = inventoryId;
@@ -137,7 +168,28 @@ public class Inventory extends AggregateRoot<InventoryId> {
             return this;
         }
 
+        public Builder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
         public Inventory build() {
+            // Validate mandatory fields
+            if (inventoryId == null) {
+                throw new IllegalStateException("InventoryId must be provided.");
+            }
+            if (warehouseId == null) {
+                throw new IllegalStateException("WarehouseId must be provided.");
+            }
+            if (productId == null) {
+                throw new IllegalStateException("ProductId must be provided.");
+            }
+            if (totalQuantity < 0 || reservedQuantity < 0 || availableQuantity < 0) {
+                throw new IllegalStateException("Quantities must be non-negative.");
+            }
+            if (totalQuantity != reservedQuantity + availableQuantity) {
+                throw new IllegalStateException("Total quantity must equal reserved plus available quantity.");
+            }
             return new Inventory(this);
         }
     }

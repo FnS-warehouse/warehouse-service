@@ -12,11 +12,9 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
 
     private String name;
     private Location location;
-    private User createdBy;
-    private List<User> warehouseAdmins;
+    private final List<User> warehouseAdmins;
     private WarehouseStatus status;
 
-    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
@@ -24,31 +22,23 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         super.setId(builder.warehouseId);
         this.name = builder.name;
         this.location = builder.location;
-        this.createdBy = builder.createdBy;
-        this.warehouseAdmins = builder.warehouseAdmins != null ? builder.warehouseAdmins : new ArrayList<>();
-        this.status = builder.status != null ? builder.status : WarehouseStatus.ACTIVE;
-        LocalDateTime createdAt = builder.createdAt != null ? builder.createdAt : LocalDateTime.now();
+        User createdBy = builder.createdBy;
+        this.warehouseAdmins = new ArrayList<>(builder.warehouseAdmins);
+        this.status = builder.status;
+        LocalDateTime createdAt = builder.createdAt;
+        this.deletedAt = builder.deletedAt;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public void deactivateWarehouse(UserRole userRole) {
-        validateSuperAdmin(userRole);
+    public void deactivateWarehouse() {
         this.status = WarehouseStatus.DEACTIVE;
         this.deletedAt = LocalDateTime.now();
     }
 
-    public void initializeWarehouse(User creator) {
-        this.createdBy = creator;
-        this.status = WarehouseStatus.ACTIVE;
-        this.createdAt = LocalDateTime.now();
-        this.warehouseAdmins = new ArrayList<>();
-    }
-
-    public void updateName(String newName, UserRole userRole) {
-        validateSuperAdmin(userRole);
+    public void updateName(String newName) {
         if (newName == null || newName.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty.");
         }
@@ -56,29 +46,15 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateLocation(Location newLocation, UserRole userRole) {
-        validateSuperAdmin(userRole);
+    public void updateLocation(Location newLocation) {
         this.location = newLocation;
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void deleteWarehouse(UserRole userRole) {
-        validateSuperAdmin(userRole);
-        this.status = WarehouseStatus.DEACTIVE;
-        this.deletedAt = LocalDateTime.now();
-    }
-
-    public void assignAdmin(User user, UserRole userRole) {
-        validateSuperAdmin(userRole);
+    public void assignAdmin(User user) {
         if (!warehouseAdmins.contains(user)) {
             warehouseAdmins.add(user);
-        }
-    }
-
-
-    private void validateSuperAdmin(UserRole userRole) {
-        if (userRole.getType() != UserRoleType.SUPER_ADMIN) {
-            throw new IllegalStateException("Only Super Admins can perform this action.");
+            this.updatedAt = LocalDateTime.now();
         }
     }
 
@@ -93,9 +69,9 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         private String name;
         private Location location;
         private User createdBy;
-        private List<User> warehouseAdmins;
-        private WarehouseStatus status;
-        private LocalDateTime createdAt;
+        private List<User> warehouseAdmins = new ArrayList<>();
+        private WarehouseStatus status = WarehouseStatus.ACTIVE;
+        private LocalDateTime createdAt = LocalDateTime.now();
         private LocalDateTime deletedAt;
 
         public Builder warehouseId(WarehouseId warehouseId) {
@@ -104,32 +80,47 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         }
 
         public Builder name(String name) {
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("Name cannot be null or empty.");
+            }
             this.name = name;
             return this;
         }
 
         public Builder location(Location location) {
+            if (location == null) {
+                throw new IllegalArgumentException("Location cannot be null.");
+            }
             this.location = location;
             return this;
         }
 
         public Builder createdBy(User createdBy) {
+            if (createdBy == null) {
+                throw new IllegalArgumentException("Creator cannot be null.");
+            }
             this.createdBy = createdBy;
             return this;
         }
 
         public Builder warehouseAdmins(List<User> warehouseAdmins) {
-            this.warehouseAdmins = warehouseAdmins;
+            if (warehouseAdmins != null) {
+                this.warehouseAdmins = new ArrayList<>(warehouseAdmins);
+            }
             return this;
         }
 
         public Builder status(WarehouseStatus status) {
-            this.status = status;
+            if (status != null) {
+                this.status = status;
+            }
             return this;
         }
 
         public Builder createdAt(LocalDateTime createdAt) {
-            this.createdAt = createdAt;
+            if (createdAt != null) {
+                this.createdAt = createdAt;
+            }
             return this;
         }
 
@@ -143,6 +134,18 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         }
 
         public Warehouse build() {
+            if (this.warehouseId == null) {
+                throw new IllegalStateException("WarehouseId must be set.");
+            }
+            if (this.name == null || this.name.trim().isEmpty()) {
+                throw new IllegalStateException("Name must be set.");
+            }
+            if (this.location == null) {
+                throw new IllegalStateException("Location must be set.");
+            }
+            if (this.createdBy == null) {
+                throw new IllegalStateException("Creator must be set.");
+            }
             return new Warehouse(this);
         }
     }

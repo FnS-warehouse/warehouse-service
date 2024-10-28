@@ -2,28 +2,29 @@ package com.fns.warehouse.service.domain.entity;
 
 import com.fns.domain.entity.*;
 import com.fns.domain.valueObject.*;
+import com.fns.warehouse.service.domain.exception.UnauthorizedActionException;
+
 import java.time.LocalDateTime;
 
 public class InventoryTransfer extends BaseEntity<InventoryTransferId> {
 
-    private InventoryTransferId transferId;
-    private InventoryId inventoryId;
-    private UserId user;
-    private TransferType transferType;
-    private WarehouseId WHsourceId;
-    private WarehouseId WHdestinationId;
-    private int quantity;
+    private final InventoryId inventoryId;
+    private final UserId userId;
+    private final TransferType transferType;
+    private final WarehouseId sourceWarehouseId;
+    private final WarehouseId destinationWarehouseId;
+    private final int quantity;
     private TransferStatus status;
-    private LocalDateTime requestTime;
+    private final LocalDateTime requestTime;
     private LocalDateTime processedTime;
 
     private InventoryTransfer(Builder builder) {
         super.setId(builder.transferId);
         this.inventoryId = builder.inventoryId;
-        this.user = builder.user;
+        this.userId = builder.userId;
         this.transferType = builder.transferType;
-        this.WHsourceId = builder.WHsourceId;
-        this.WHdestinationId = builder.WHdestinationId;
+        this.sourceWarehouseId = builder.sourceWarehouseId;
+        this.destinationWarehouseId = builder.destinationWarehouseId;
         this.quantity = builder.quantity;
         this.status = builder.status;
         this.requestTime = builder.requestTime != null ? builder.requestTime : LocalDateTime.now();
@@ -34,64 +35,56 @@ public class InventoryTransfer extends BaseEntity<InventoryTransferId> {
         return new Builder();
     }
 
-    public void createMutationRequest(int qty, UserRole userRole) {
+    public void createMutationRequest(UserRole userRole) {
         validateAdminPermissions(userRole);
-        this.quantity = qty;
         this.status = TransferStatus.PENDING;
-        createJournalEntry(JournalReason.ORDERING);
     }
 
     public void approveTransfer(UserRole userRole) {
         validateAdminPermissions(userRole);
+        if (this.status != TransferStatus.PENDING) {
+            throw new IllegalStateException("Only pending transfers can be approved.");
+        }
         this.status = TransferStatus.APPROVED;
         this.processedTime = LocalDateTime.now();
-        createJournalEntry(JournalReason.TRANSFERRED);
     }
 
     public void cancelTransfer(UserRole userRole) {
         validateAdminPermissions(userRole);
+        if (this.status == TransferStatus.APPROVED) {
+            throw new IllegalStateException("Approved transfers cannot be canceled.");
+        }
         this.status = TransferStatus.CANCELLED;
         this.processedTime = LocalDateTime.now();
-        createJournalEntry(JournalReason.CANCELED);
-    }
-
-    private void createJournalEntry(JournalReason reason) {
-        InventoryJournal journalEntry = InventoryJournal.builder()
-                .inventoryId(this.inventoryId)
-                .totalQuantity(this.quantity)
-                .reason(reason)  // Using the JournalReason enum
-                .build();
-        journalEntry.addJournal();
     }
 
     private void validateAdminPermissions(UserRole userRole) {
         if (userRole.getType() != UserRoleType.WH_ADMIN && userRole.getType() != UserRoleType.SUPER_ADMIN) {
-            throw new IllegalStateException("Only Admins and Super Admins can process stock transfers.");
+            throw new UnauthorizedActionException("Only Admins and Super Admins can process stock transfers.");
         }
     }
 
-
-    public InventoryTransferId getTransferId() { return transferId; }
+    // Getters
     public InventoryId getInventoryId() { return inventoryId; }
-    public UserId getUser() { return user; }
+    public UserId getUserId() { return userId; }
     public TransferType getTransferType() { return transferType; }
-    public WarehouseId getWHsourceId() { return WHsourceId; }
-    public WarehouseId getWHdestinationId() { return WHdestinationId; }
+    public WarehouseId getSourceWarehouseId() { return sourceWarehouseId; }
+    public WarehouseId getDestinationWarehouseId() { return destinationWarehouseId; }
     public int getQuantity() { return quantity; }
     public TransferStatus getStatus() { return status; }
     public LocalDateTime getRequestTime() { return requestTime; }
     public LocalDateTime getProcessedTime() { return processedTime; }
 
-    // Builder class
+    // Builder class with validation
     public static class Builder {
         private InventoryTransferId transferId;
         private InventoryId inventoryId;
-        private UserId user;
+        private UserId userId;
         private TransferType transferType;
-        private WarehouseId WHsourceId;
-        private WarehouseId WHdestinationId;
+        private WarehouseId sourceWarehouseId;
+        private WarehouseId destinationWarehouseId;
         private int quantity;
-        private TransferStatus status;
+        private TransferStatus status = TransferStatus.PENDING; // Default status
         private LocalDateTime requestTime;
         private LocalDateTime processedTime;
 
@@ -105,8 +98,8 @@ public class InventoryTransfer extends BaseEntity<InventoryTransferId> {
             return this;
         }
 
-        public Builder user(UserId user) {
-            this.user = user;
+        public Builder userId(UserId userId) {
+            this.userId = userId;
             return this;
         }
 
@@ -115,13 +108,13 @@ public class InventoryTransfer extends BaseEntity<InventoryTransferId> {
             return this;
         }
 
-        public Builder WHsourceId(WarehouseId WHsourceId) {
-            this.WHsourceId = WHsourceId;
+        public Builder sourceWarehouseId(WarehouseId sourceWarehouseId) {
+            this.sourceWarehouseId = sourceWarehouseId;
             return this;
         }
 
-        public Builder WHdestinationId(WarehouseId WHdestinationId) {
-            this.WHdestinationId = WHdestinationId;
+        public Builder destinationWarehouseId(WarehouseId destinationWarehouseId) {
+            this.destinationWarehouseId = destinationWarehouseId;
             return this;
         }
 
@@ -146,6 +139,25 @@ public class InventoryTransfer extends BaseEntity<InventoryTransferId> {
         }
 
         public InventoryTransfer build() {
+            // Validate mandatory fields
+            if (transferId == null) {
+                throw new IllegalStateException("TransferId must be provided.");
+            }
+            if (inventoryId == null) {
+                throw new IllegalStateException("InventoryId must be provided.");
+            }
+            if (userId == null) {
+                throw new IllegalStateException("UserId must be provided.");
+            }
+            if (sourceWarehouseId == null || destinationWarehouseId == null) {
+                throw new IllegalStateException("Both source and destination WarehouseIds must be provided.");
+            }
+            if (quantity <= 0) {
+                throw new IllegalStateException("Quantity must be positive.");
+            }
+            if (transferType == null) {
+                throw new IllegalStateException("TransferType must be provided.");
+            }
             return new InventoryTransfer(this);
         }
     }

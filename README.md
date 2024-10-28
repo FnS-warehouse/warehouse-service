@@ -28,5 +28,7 @@ Run dependency graph
   - [ ] Implement Basic Spring in this project
   - [ ] Learning Lombok
   - [ ] Implement Basic Lombok in this project
+- [x] Check Domain Core logic again. Fit in requirement or not
+- [ ] Watching video recording where to implement repositories and API
 - [ ] Install Database. Integrate with DB. -> warehouse-container
 - [ ] Must can run the kafka

@@ -11,13 +11,18 @@ import com.fns.domain.valueObject.*;
 
 import javax.annotation.processing.SupportedAnnotationTypes;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 public class WarehouseDomainServiceImpl implements WarehouseDomainService {
     @Override
-    public WarehouseCreatedEvent createWarehouse(Warehouse warehouse, Location location, User user) throws IllegalAccessException {
+    public WarehouseCreatedEvent createWarehouse(String name, Location location, User user) throws IllegalAccessException {
         validateSuperAdminAccess(user);
-        warehouse.updateLocation(location, user.getRole());
-        warehouse.initializeWarehouse(user);
+        Warehouse warehouse = Warehouse.builder()
+                .warehouseId(new WarehouseId(UUID.randomUUID()))
+                .name(name)
+                .location(location)
+                .createdBy(user)
+                .build();
 
         return new WarehouseCreatedEvent(warehouse, ZonedDateTime.now());
     }
@@ -26,10 +31,10 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService {
     public Warehouse updateWarehouse(Warehouse warehouse, Location newLocation, String newName, User user) throws IllegalAccessException {
         validateSuperAdminAccess(user);
         if (newLocation != null) {
-            warehouse.updateLocation(newLocation, user.getRole());
+            warehouse.updateLocation(newLocation);
         }
         if (newName != null && !newName.isEmpty()) {
-            warehouse.updateName(newName, user.getRole());
+            warehouse.updateName(newName);
         }
         return warehouse;
     }
@@ -37,24 +42,22 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService {
     @Override
     public void deleteWarehouse(Warehouse warehouse, User user) throws IllegalAccessException {
         validateSuperAdminAccess(user);
-        warehouse.deactivateWarehouse(user.getRole());
+        warehouse.deactivateWarehouse();
     }
 
     @Override
     public Warehouse assignWarehouseAdmin(Warehouse warehouse, User admin, User superAdmin) throws IllegalAccessException {
         validateSuperAdminAccess(superAdmin);
-        warehouse.assignAdmin(admin, admin.getRole());
+        warehouse.assignAdmin(admin);
         return warehouse;
     }
 
-    // Helper method to validate Super Admin access
     private void validateSuperAdminAccess(User user) throws IllegalAccessException {
         if (user.getRole().getType() != UserRoleType.SUPER_ADMIN) {
             throw new IllegalAccessException("Only Super Admins can perform this action.");
         }
     }
 
-    // Helper method to validate Admin or Warehouse Admin access
     private void validateAdminAccess(Warehouse warehouse, User user) throws IllegalAccessException {
         if (user.getRole().getType() == UserRoleType.WH_ADMIN) {
             throw new IllegalAccessException("Warehouse Admins can only access their assigned warehouses.");

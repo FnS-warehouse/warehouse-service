@@ -6,7 +6,7 @@ import com.fns.domain.valueObject.*;
 public class UserRole extends BaseEntity<UserRoleId> {
 
     private UserRoleId roleId;
-    private UserRoleType type;
+    private final UserRoleType type;
 
     private UserRole(Builder builder) {
         super.setId(builder.roleId);

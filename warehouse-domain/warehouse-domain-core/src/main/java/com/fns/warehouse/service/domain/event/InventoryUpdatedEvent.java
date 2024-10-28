@@ -6,19 +6,14 @@ import java.time.ZonedDateTime;
 
 public class InventoryUpdatedEvent extends InventoryEvent {
     private final int quantityChange;
-    private final JournalReason reason;
 
-    public InventoryUpdatedEvent(Inventory inventory, int quantityChange, JournalReason reason, ZonedDateTime updatedAt) {
+    public InventoryUpdatedEvent(Inventory inventory, int quantityChange, ZonedDateTime updatedAt) {
         super(inventory, updatedAt);
         this.quantityChange = quantityChange;
-        this.reason = reason;
     }
 
     public int getQuantityChange() {
         return quantityChange;
     }
 
-    public JournalReason getReason() {
-        return reason;
-    }
 }

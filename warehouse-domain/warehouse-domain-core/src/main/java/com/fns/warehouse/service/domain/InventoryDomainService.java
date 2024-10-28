@@ -14,11 +14,11 @@ public interface InventoryDomainService {
 
     InventoryCreatedEvent createInventory(UUID warehouseId, UUID productId, int quantity, User user);
 
-    InventoryUpdatedEvent updateInventory(Inventory inventory, JournalReason reason, int quantityChange, User user);
+    InventoryUpdatedEvent updateInventory(Inventory inventory, int quantityChange, User user);
 
     InventoryTransferRequestedEvent requestTransfer(Inventory sourceInventory, UUID destinationWarehouseId, int quantity, User user);
 
-    InventoryTransferApprovedEvent approveTransfer(InventoryTransfer transfer, Inventory inventory, User user);
+    InventoryTransferApprovedEvent approveTransfer(InventoryTransfer transfer, Inventory sourceInventory, Inventory destinationInventory ,User user);
 
-    InventoryTransferCanceledEvent cancelTransfer(InventoryTransfer transfer, User user);
+    InventoryTransferCanceledEvent cancelTransfer(InventoryTransfer transfer, Inventory inventory,User user);
 }
