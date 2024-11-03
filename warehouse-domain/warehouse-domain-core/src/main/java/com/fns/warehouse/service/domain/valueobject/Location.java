@@ -11,7 +11,7 @@ public class Location {
     private String district;
     private String postalCode;
 
-    private Location(Builder builder) {
+    public Location(Builder builder) {
         this.latitude = builder.latitude;
         this.longitude = builder.longitude;
         this.address = builder.address;

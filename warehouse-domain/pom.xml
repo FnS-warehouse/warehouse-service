@@ -17,4 +17,7 @@
         <module>warehouse-application-service</module>
     </modules>
 
+    <dependencies>
+    </dependencies>
+
 </project>

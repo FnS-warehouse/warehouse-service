@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 
 public class WarehouseUpdatedEvent extends WarehouseEvent {
 
-    public WarehouseUpdatedEvent(Warehouse warehouse, String newName, ZonedDateTime updatedAt) {
+    public WarehouseUpdatedEvent(Warehouse warehouse, ZonedDateTime updatedAt) {
         super(warehouse, updatedAt);
     }
 }

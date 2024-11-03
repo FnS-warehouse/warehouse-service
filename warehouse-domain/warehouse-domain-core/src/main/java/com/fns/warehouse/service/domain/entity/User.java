@@ -1,55 +1,28 @@
 package com.fns.warehouse.service.domain.entity;
 
 import com.fns.domain.entity.*;
-import com.fns.domain.valueObject.*;
+import com.fns.domain.valueobject.*;
+import com.fns.warehouse.service.domain.valueobject.UserRole;
 
 public class User extends BaseEntity<UserId> {
 
     private UserId userId;
     private String name;
-    private UserRole role;
+    private UserRole userRole;
 
-    private User(Builder builder) {
-        super.setId(builder.userId);
-        this.name = builder.name;
-        this.role = builder.role;
+    public User(UserId userId, String name, UserRole userRole) {
+        super.setId(userId);
+        this.name = name;
+        this.userRole = userRole;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public boolean isSuperAdmin() {
-        return role.getType() == UserRoleType.SUPER_ADMIN;
+    public User(UserId userId) {
+        super.setId(userId);
     }
 
     public UserId getUserId() { return userId; }
     public String getName() { return name; }
-    public UserRole getRole() { return role; }
+    public UserRole getUserRole() { return userRole; }
 
-    // Builder class
-    public static class Builder {
-        private UserId userId;
-        private String name;
-        private UserRole role;
 
-        public Builder userId(UserId userId) {
-            this.userId = userId;
-            return this;
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder role(UserRole role) {
-            this.role = role;
-            return this;
-        }
-
-        public User build() {
-            return new User(this);
-        }
-    }
 }
