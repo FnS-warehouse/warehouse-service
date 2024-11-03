@@ -7,4 +7,9 @@ public class WarehouseDeletedEvent extends WarehouseEvent {
     public WarehouseDeletedEvent(Warehouse warehouse, ZonedDateTime deletedAt) {
         super(warehouse, deletedAt);
     }
+
+    @Override
+    public void fire() {
+
+    }
 }

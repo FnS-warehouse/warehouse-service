@@ -3,11 +3,10 @@ package com.fns.warehouse.service.domain;
 import com.fns.warehouse.service.domain.dto.create.CreateWarehouseCommand;
 import com.fns.warehouse.service.domain.dto.create.CreateWarehouseResponse;
 import com.fns.warehouse.service.domain.dto.create.WarehouseLocation;
-import com.fns.warehouse.service.domain.entity.Product;
 //import com.fns.warehouse.service.domain.entity.User;
+import com.fns.warehouse.service.domain.exception.WarehouseDomainException;
 import com.fns.warehouse.service.domain.mapper.WarehouseDataMapper;
 import com.fns.warehouse.service.domain.ports.input.service.WarehouseApplicationService;
-import com.fns.domain.valueobject.*;
 import com.fns.warehouse.service.domain.ports.output.repository.StockRepository;
 import com.fns.warehouse.service.domain.ports.output.repository.UserRepository;
 import com.fns.warehouse.service.domain.ports.output.repository.WarehouseRepository;
@@ -19,13 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(classes = WarehouseTestConfiguration.class)
@@ -46,9 +42,9 @@ public class WarehouseApplicationServiceTest {
     private UserRepository userRepository;
 
     private CreateWarehouseCommand createWarehouseCommand;
-    private CreateWarehouseCommand createWarehouseCommandWrongPrice;
+    private CreateWarehouseCommand createWarehouseCommandLocationNotCompleted;
     private CreateWarehouseCommand createWarehouseCommandWrongProductPrice;
-    private final UUID CUSTOMER_ID = UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb41");
+    private final UUID WAREHOUSE_ID = UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb41");
     private final UUID SELLER_ID = UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45");
     private final UUID PRODUCT_ID = UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb48");
     private final UUID ORDER_ID = UUID.fromString("15a497c1-0f4b-4eff-b9f4-c402c8c07afb");
@@ -57,10 +53,11 @@ public class WarehouseApplicationServiceTest {
     @BeforeAll
     public void init(){
         createWarehouseCommand = CreateWarehouseCommand.builder()
+                .warehouseId(WAREHOUSE_ID)
                 .name("Sinar Jaya")
                 .location(WarehouseLocation.builder()
-                        .latitude(90.84034903f)
-                        .longitude(103.9090332f)
+                        .latitude(56.90f)
+                        .longitude(103.90f)
                         .postalCode("100AB")
                         .city("Paris")
                         .district("Sinai")
@@ -69,51 +66,14 @@ public class WarehouseApplicationServiceTest {
                         .build())
                 .build();
 
-//        createWarehouseCommandWrongPrice = CreateWarehouseCommand.builder()
-//                .customerId(CUSTOMER_ID)
-//                .sellerId(SELLER_ID)
-//                .address(OrderAddress.builder()
-//                        .street("Street_1")
-//                        .postalCode("100AB")
-//                        .city("Paris")
-//                        .build())
-//                .price(new BigDecimal("250.00"))
-//                .items(List.of(OrderItem.builder()
-//                                .productId(PRODUCT_ID)
-//                                .quantity(1)
-//                                .price(new BigDecimal("50.00"))
-//                                .subTotal(new BigDecimal("50.00"))
-//                                .build(),
-//                        OrderItem.builder()
-//                                .productId(PRODUCT_ID)
-//                                .quantity(3)
-//                                .price(new BigDecimal("50.00"))
-//                                .subTotal(new BigDecimal("150.00"))
-//                                .build()))
-//                .build();
-//
-//        createWarehouseCommandWrongProductPrice = CreateWarehouseCommand.builder()
-//                .customerId(CUSTOMER_ID)
-//                .sellerId(SELLER_ID)
-//                .address(OrderAddress.builder()
-//                        .street("Street_1")
-//                        .postalCode("100AB")
-//                        .city("Paris")
-//                        .build())
-//                .price(new BigDecimal("210.00"))
-//                .items(List.of(OrderItem.builder()
-//                                .productId(PRODUCT_ID)
-//                                .quantity(1)
-//                                .price(new BigDecimal("60.00"))
-//                                .subTotal(new BigDecimal("60.00"))
-//                                .build(),
-//                        OrderItem.builder()
-//                                .productId(PRODUCT_ID)
-//                                .quantity(3)
-//                                .price(new BigDecimal("50.00"))
-//                                .subTotal(new BigDecimal("150.00"))
-//                                .build()))
-//                .build();
+        createWarehouseCommandLocationNotCompleted = CreateWarehouseCommand.builder()
+                .name("sinar Jaya")
+                .location(WarehouseLocation.builder()
+                        .address("Street_1")
+                        .postalCode("100AB")
+                        .city("Paris")
+                        .build())
+                .build();
 
 //        Customer customer = new Customer();
 //        customer.setId(new CustomerId(CUSTOMER_ID));
@@ -142,14 +102,14 @@ public class WarehouseApplicationServiceTest {
         assertEquals(createWarehouseResponse.getWarehouseStatus(), WarehouseStatus.ACTIVE);
         assertEquals(createWarehouseResponse.getMessage(), "Warehouse created successfully");
     }
-//
-//    @Test
-//    public void testCreateOrderWithWrongTotalPrice() {
-//        OrderDomainException orderDomainException = assertThrows(OrderDomainException.class,
-//                () -> warehouseApplicationService.createOrder(createWarehouseCommandWrongPrice));
-//        assertEquals(orderDomainException.getMessage(),
-//                "Total price: 250.00 is not equal to Order items total: 200.00!");
-//    }
+
+    @Test
+    public void testCreateOrderWithWrongTotalPrice() {
+        WarehouseDomainException orderDomainException = assertThrows(WarehouseDomainException.class,
+                () -> warehouseApplicationService.createWarehouse(createWarehouseCommandLocationNotCompleted));
+        assertEquals(orderDomainException.getMessage(),
+                "");
+    }
 //
 //    @Test
 //    public void testCreateOrderWithWrongProductPrice() {

@@ -3,6 +3,7 @@ package com.fns.domain.event;
 import java.time.ZonedDateTime;
 
 public interface DomainEvent<T> {
-    T getWarehouse();
+    T getEntity();
     ZonedDateTime getCreatedAt();
+    void fire();
 }

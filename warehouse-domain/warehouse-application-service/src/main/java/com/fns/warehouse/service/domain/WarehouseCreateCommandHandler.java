@@ -15,21 +15,20 @@ public class WarehouseCreateCommandHandler {
 
     private final WarehouseDataMapper warehouseDataMapper;
 
-    private final WarehouseCreatedRequestMessagePublisher warehouseCreatedRequestMessagePublisher;
+//    private final WarehouseCreatedRequestMessagePublisher warehouseCreatedRequestMessagePublisher;
 
     public WarehouseCreateCommandHandler(WarehouseCreateHelper warehouseCreateHelper,
-                                     WarehouseDataMapper warehouseDataMapper,
-                                     WarehouseCreatedRequestMessagePublisher warehouseCreatedRequestMessagePublisher) {
+                                     WarehouseDataMapper warehouseDataMapper) {
         this.warehouseCreateHelper = warehouseCreateHelper;
         this.warehouseDataMapper = warehouseDataMapper;
-        this.warehouseCreatedRequestMessagePublisher = warehouseCreatedRequestMessagePublisher;
+//        this.warehouseCreatedRequestMessagePublisher = warehouseCreatedRequestMessagePublisher;
     }
 
     public CreateWarehouseResponse createWarehouse(CreateWarehouseCommand createWarehouseCommand) {
         WarehouseCreatedEvent warehouseCreatedEvent = warehouseCreateHelper.persistOrder(createWarehouseCommand);
-        log.info("Warehouse is created with id: {}", warehouseCreatedEvent.getWarehouse().getId().getValue());
-        warehouseCreatedRequestMessagePublisher.publish(warehouseCreatedEvent);
-        return warehouseDataMapper.orderToCreateOrderResponse(warehouseCreatedEvent.getWarehouse(),
+        log.info("Warehouse is created with id: {}", warehouseCreatedEvent.getEntity().getId().getValue());
+//        warehouseCreatedRequestMessagePublisher.publish(warehouseCreatedEvent);
+        return warehouseDataMapper.orderToCreateOrderResponse(warehouseCreatedEvent.getEntity(),
                 "Warehouse created successfully");
     }
 }

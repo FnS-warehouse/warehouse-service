@@ -15,7 +15,7 @@ public abstract class StockEvent implements DomainEvent<Stock> {
     }
 
     @Override
-    public Stock getWarehouse() {
+    public Stock getEntity() {
         return stock;
     }
 

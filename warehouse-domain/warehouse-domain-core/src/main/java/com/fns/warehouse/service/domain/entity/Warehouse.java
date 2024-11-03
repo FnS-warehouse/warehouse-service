@@ -15,6 +15,9 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
     private Location location;
     private final List<User> warehouseAdmins;
     private WarehouseStatus status;
+    private List<String> failureMessages;
+
+    public static final String FAILURE_MESSAGE_DELIMITER = ",";
 
     private Warehouse(Builder builder) {
         super.setId(builder.warehouseId);
@@ -22,6 +25,8 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         this.location = builder.location;
         this.warehouseAdmins = new ArrayList<>(builder.warehouseAdmins);
         this.status = builder.status;
+        this.failureMessages = builder.failureMessages;
+
     }
 
     public static Builder builder() {
@@ -49,12 +54,24 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         }
     }
 
+    private void updateFailureMessages(List<String> failureMessages) {
+        if (this.failureMessages != null && failureMessages != null) {
+            this.failureMessages.addAll(failureMessages.stream().filter(message -> !message.isEmpty()).toList());
+        }
+        if (this.failureMessages == null) {
+            this.failureMessages = failureMessages;
+        }
+    }
+
     // Getters
     public String getName() { return name; }
     public Location getLocation() { return location; }
     public WarehouseStatus getStatus() { return status; }
     public List<User> getWarehouseAdmins() { return warehouseAdmins; }
     public WarehouseId getWarehouseId() { return getId(); }
+    public List<String> getFailureMessages() {
+        return failureMessages;
+    }
 
     // Builder class
     public static class Builder {
@@ -63,6 +80,8 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
         private Location location;
         private List<User> warehouseAdmins = new ArrayList<>();
         private WarehouseStatus status = WarehouseStatus.ACTIVE;
+        private List<String> failureMessages;
+
 
         public Builder warehouseId(WarehouseId warehouseId) {
             this.warehouseId = warehouseId;
@@ -89,6 +108,11 @@ public class Warehouse extends AggregateRoot<WarehouseId> {
             if (warehouseAdmins != null) {
                 this.warehouseAdmins = new ArrayList<>(warehouseAdmins);
             }
+            return this;
+        }
+
+        public Builder failureMessages(List<String> val) {
+            this.failureMessages = val;
             return this;
         }
 

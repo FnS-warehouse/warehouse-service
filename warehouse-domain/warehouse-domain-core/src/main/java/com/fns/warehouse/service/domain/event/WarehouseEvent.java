@@ -14,7 +14,7 @@ public abstract class WarehouseEvent implements DomainEvent<Warehouse> {
     }
 
     @Override
-    public Warehouse getWarehouse() {
+    public Warehouse getEntity() {
         return warehouse;
     }
 

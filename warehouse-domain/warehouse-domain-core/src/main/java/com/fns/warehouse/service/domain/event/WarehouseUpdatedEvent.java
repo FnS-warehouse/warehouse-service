@@ -8,4 +8,9 @@ public class WarehouseUpdatedEvent extends WarehouseEvent {
     public WarehouseUpdatedEvent(Warehouse warehouse, ZonedDateTime updatedAt) {
         super(warehouse, updatedAt);
     }
+
+    @Override
+    public void fire() {
+
+    }
 }

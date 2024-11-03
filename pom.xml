@@ -38,6 +38,13 @@
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>3.1.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-jpa</artifactId>
         <version>3.1.0</version>
       </dependency>
@@ -173,5 +180,12 @@
     </plugins>
   </build>
 
+
+
+<!--  <properties>-->
+<!--    <java.version>17</java.version>-->
+<!--    <spring.boot.version>3.1.0</spring.boot.version>-->
+<!--    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+<!--  </properties>-->
 
 </project>

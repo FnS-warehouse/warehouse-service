@@ -1,21 +1,24 @@
 package com.fns.warehouse.service.domain.mapper;
 
 import com.fns.domain.valueobject.Money;
+import com.fns.domain.valueobject.WarehouseId;
 import com.fns.warehouse.service.domain.dto.create.CreateWarehouseCommand;
 import com.fns.warehouse.service.domain.dto.create.CreateWarehouseResponse;
 import com.fns.warehouse.service.domain.dto.create.WarehouseLocation;
 import com.fns.warehouse.service.domain.entity.User;
 import com.fns.warehouse.service.domain.entity.Warehouse;
 import com.fns.warehouse.service.domain.valueobject.Location;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Component
 public class WarehouseDataMapper {
     public Warehouse createWarehouseCommandToWarehouse(CreateWarehouseCommand createWarehouseCommand) {
         return Warehouse.builder()
+                .warehouseId(new WarehouseId(createWarehouseCommand.getWarehouseId()))
                 .name(createWarehouseCommand.getName())
                 .location(warehouseLocationToLocation(createWarehouseCommand.getLocation()))
 //                .warehouseAdmins(usersToUserEntities(createOrderCommand.getItems()))

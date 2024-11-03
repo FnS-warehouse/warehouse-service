@@ -9,4 +9,8 @@ public class StockCreatedEvent extends StockEvent {
     }
 
 
+    @Override
+    public void fire() {
+
+    }
 }

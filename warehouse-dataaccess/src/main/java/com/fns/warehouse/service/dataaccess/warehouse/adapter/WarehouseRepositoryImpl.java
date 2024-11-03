@@ -1,39 +1,28 @@
-//package com.fns.warehouse.service.dataaccess.warehouse.adapter;
-//
-//import com.fns.domain.valueobject.OrderId;
-//import com.fns.warehouse.service.dataaccess.warehouse.mapper.OrderDataAccessMapper;
-//import com.fns.warehouse.service.dataaccess.warehouse.repository.OrderJpaRepository;
-//import com.fns.warehouse.service.domain.entity.Warehouse;
-//import com.fns.warehouse.service.domain.ports.output.repository.WarehouseRepository;
-//import org.springframework.stereotype.Component;
-//import java.util.Optional;
-//
-//@Component
-//public class OrderRepositoryImpl implements OrderRepository {
-//
-//    private final OrderJpaRepository orderJpaRepository;
-//    private final OrderDataAccessMapper orderDataAccessMapper;
-//
-//    public OrderRepositoryImpl(OrderJpaRepository orderJpaRepository,
-//                               OrderDataAccessMapper orderDataAccessMapper) {
-//        this.orderJpaRepository = orderJpaRepository;
-//        this.orderDataAccessMapper = orderDataAccessMapper;
-//    }
-//
-//    @Override
-//    public Order save(Order order) {
-//        return orderDataAccessMapper.orderEntityToOrder(orderJpaRepository
-//                .save(orderDataAccessMapper.orderToOrderEntity(order)));
-//    }
-//
-//    @Override
-//    public Optional<Order> findById(OrderId orderId) {
-//        return orderJpaRepository.findById(orderId.getValue()).map(orderDataAccessMapper::orderEntityToOrder);
-//    }
-//
-//    @Override
-//    public Optional<Order> findByTrackingId(TrackingId trackingId) {
-//        return orderJpaRepository.findByTrackingId(trackingId.getValue())
-//                .map(orderDataAccessMapper::orderEntityToOrder);
-//    }
-//}
+package com.fns.warehouse.service.dataaccess.warehouse.adapter;
+
+import com.fns.warehouse.service.dataaccess.warehouse.entity.WarehouseEntity;
+import com.fns.warehouse.service.dataaccess.warehouse.mapper.WarehouseDataAccessMapper;
+import com.fns.warehouse.service.dataaccess.warehouse.repository.WarehouseJpaRepository;
+import com.fns.warehouse.service.domain.entity.Warehouse;
+import com.fns.warehouse.service.domain.ports.output.repository.WarehouseRepository;
+import org.springframework.stereotype.Component;
+
+@Component
+public class WarehouseRepositoryImpl implements WarehouseRepository {
+
+    private final WarehouseJpaRepository warehouseJpaRepository;
+    private final WarehouseDataAccessMapper warehouseDataAccessMapper;
+
+    public WarehouseRepositoryImpl(WarehouseJpaRepository warehouseJpaRepository,
+                                   WarehouseDataAccessMapper warehouseDataAccessMapper) {
+        this.warehouseJpaRepository = warehouseJpaRepository;
+        this.warehouseDataAccessMapper = warehouseDataAccessMapper;
+    }
+
+    @Override
+    public Warehouse save(Warehouse warehouse) {
+        return warehouseDataAccessMapper.warehouseEntityToWarehouse(warehouseJpaRepository
+                .save(warehouseDataAccessMapper.warehouseToWarehouseEntity(warehouse)));
+    }
+
+}

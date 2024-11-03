@@ -24,10 +24,10 @@ Run dependency graph
   - [x] Install Spring
   - [x] Install Lombok
   - [ ] Install Avro
-  - [ ] Learning Basic Spring
-  - [ ] Implement Basic Spring in this project
-  - [ ] Learning Lombok
-  - [ ] Implement Basic Lombok in this project
+  - [x] Learning Basic Spring
+  - [x] Implement Basic Spring in this project
+  - [x] Learning Lombok
+  - [x] Implement Basic Lombok in this project
 - [x] Check Domain Core logic again. Fit in requirement or not
 - [ ] Minimum level -> show already define in warehouse-domain completed 
   - [ ] warehouse-domain-core
@@ -48,9 +48,10 @@ Run dependency graph
         - [ ] Create Implementation
         - [ ] Create Port
   - [ ] unit testing 5-10%. Next week. 
-  - [ ] create simple CI/CD pipeline 
+  - [x] create simple CI/CD pipeline 
   - [ ] Integrate with sonar cube 
-- [ ] Install Database. Integrate with DB. -> warehouse-container
+- [x] Install Database. Integrate with DB. -> warehouse-container
 - [ ] Must can run the kafka
 - [ ] Watching video recording where to implement repositories and API
+- [x] Running Spring Web
 - [ ] Maximum Level -> Can Hit API with Spring 

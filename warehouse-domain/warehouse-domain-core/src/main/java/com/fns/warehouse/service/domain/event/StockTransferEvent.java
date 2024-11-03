@@ -19,7 +19,7 @@ public abstract class StockTransferEvent implements DomainEvent<Stock> {
     }
 
     @Override
-    public Stock getWarehouse() {
+    public Stock getEntity() {
         return sourceStock;
     }
 

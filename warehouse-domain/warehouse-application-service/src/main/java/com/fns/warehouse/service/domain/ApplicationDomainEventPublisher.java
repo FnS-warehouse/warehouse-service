@@ -15,7 +15,7 @@ public class ApplicationDomainEventPublisher implements ApplicationEventPublishe
     @Override
     public void publish(WarehouseCreatedEvent domainEvent) {
         this.applicationEventPublisher.publishEvent(domainEvent);
-        log.info("OrderCreatedEvent is published for order id: {}", domainEvent.getWarehouse()
+        log.info("OrderCreatedEvent is published for order id: {}", domainEvent.getEntity()
                 .getId().getValue());
     }
 

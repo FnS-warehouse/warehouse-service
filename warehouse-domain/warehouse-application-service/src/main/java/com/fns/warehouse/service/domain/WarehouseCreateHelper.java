@@ -5,10 +5,10 @@ import com.fns.warehouse.service.domain.entity.*;
 import com.fns.warehouse.service.domain.event.*;
 import com.fns.warehouse.service.domain.exception.WarehouseDomainException;
 import com.fns.warehouse.service.domain.mapper.WarehouseDataMapper;
-import com.fns.warehouse.service.domain.ports.output.message.publisher.WarehouseCreatedRequestMessagePublisher;
-import com.fns.warehouse.service.domain.ports.output.repository.StockRepository;
+//import com.fns.warehouse.service.domain.ports.output.message.publisher.WarehouseCreatedRequestMessagePublisher;
+//import com.fns.warehouse.service.domain.ports.output.repository.StockRepository;
 import com.fns.warehouse.service.domain.ports.output.repository.WarehouseRepository;
-import com.fns.warehouse.service.domain.ports.output.repository.UserRepository;
+//import com.fns.warehouse.service.domain.ports.output.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,26 +21,14 @@ public class WarehouseCreateHelper {
 
     private final WarehouseRepository warehouseRepository;
 
-    private final UserRepository userRepository;
-
-    private final StockRepository stockRepository;
-
     private final WarehouseDataMapper warehouseDataMapper;
-
-    private final WarehouseCreatedRequestMessagePublisher warehouseCreatedRequestMessagePublisher;
 
     public WarehouseCreateHelper(WarehouseDomainService warehouseDomainService,
                                  WarehouseRepository warehouseRepository,
-                                 UserRepository userRepository,
-                                 StockRepository stockRepository,
-                                 WarehouseDataMapper warehouseDataMapper,
-                                 WarehouseCreatedRequestMessagePublisher warehouseCreatedRequestMessagePublisher) {
+                                 WarehouseDataMapper warehouseDataMapper) {
         this.warehouseDomainService = warehouseDomainService;
         this.warehouseRepository = warehouseRepository;
-        this.userRepository = userRepository;
-        this.stockRepository = stockRepository;
         this.warehouseDataMapper = warehouseDataMapper;
-        this.warehouseCreatedRequestMessagePublisher = warehouseCreatedRequestMessagePublisher;
     }
 
     @Transactional
@@ -50,7 +38,7 @@ public class WarehouseCreateHelper {
                 warehouse.getName(),
                 warehouse.getLocation());
         saveWarehouse(warehouse);
-        log.info("Warehouse is created with id: {}", warehouseCreatedEvent.getWarehouse().getId().getValue());
+        log.info("Warehouse is created with id: {}", warehouseCreatedEvent.getEntity().getId().getValue());
         return warehouseCreatedEvent;
     }
 

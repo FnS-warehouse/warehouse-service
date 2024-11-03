@@ -8,4 +8,8 @@ public class WarehouseCreatedEvent extends WarehouseEvent {
         super(warehouse, createdAt);
     }
 
+    @Override
+    public void fire() {
+
+    }
 }

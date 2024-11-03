@@ -16,4 +16,8 @@ public class StockUpdatedEvent extends StockEvent {
         return quantityChange;
     }
 
+    @Override
+    public void fire() {
+
+    }
 }
