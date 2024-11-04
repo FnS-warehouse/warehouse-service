@@ -10,6 +10,10 @@ public abstract class BaseEntity<ID> {
         return id;
     }
 
+    public void setId(ID id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -21,7 +25,4 @@ public abstract class BaseEntity<ID> {
     @Override
     public int hashCode() { return Objects.hash(id); }
 
-    protected <ID> void setId(ID id) {
-        
-    }
 }

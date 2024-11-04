@@ -47,7 +47,8 @@ Run dependency graph
         - [ ] Create Helper
         - [ ] Create Implementation
         - [ ] Create Port
-  - [ ] unit testing 5-10%. Next week. 
+  - [x] Just 1-2 unit test
+  - [x] unit testing 5-10%. Next week. 
   - [x] create simple CI/CD pipeline 
   - [ ] Integrate with sonar cube 
 - [x] Install Database. Integrate with DB. -> warehouse-container

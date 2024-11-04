@@ -1,9 +1,11 @@
 package com.fns.warehouse.service.domain;
 
+import com.fns.domain.valueobject.WarehouseId;
 import com.fns.warehouse.service.domain.dto.create.CreateWarehouseCommand;
 import com.fns.warehouse.service.domain.dto.create.CreateWarehouseResponse;
 import com.fns.warehouse.service.domain.dto.create.WarehouseLocation;
 //import com.fns.warehouse.service.domain.entity.User;
+import com.fns.warehouse.service.domain.entity.Warehouse;
 import com.fns.warehouse.service.domain.exception.WarehouseDomainException;
 import com.fns.warehouse.service.domain.mapper.WarehouseDataMapper;
 import com.fns.warehouse.service.domain.ports.input.service.WarehouseApplicationService;
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(classes = WarehouseTestConfiguration.class)
@@ -45,9 +48,8 @@ public class WarehouseApplicationServiceTest {
     private CreateWarehouseCommand createWarehouseCommandLocationNotCompleted;
     private CreateWarehouseCommand createWarehouseCommandWrongProductPrice;
     private final UUID WAREHOUSE_ID = UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb41");
-    private final UUID SELLER_ID = UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45");
+    private final UUID STOCK_ID = UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45");
     private final UUID PRODUCT_ID = UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb48");
-    private final UUID ORDER_ID = UUID.fromString("15a497c1-0f4b-4eff-b9f4-c402c8c07afb");
     private final BigDecimal PRICE = new BigDecimal("200.00");
 
     @BeforeAll
@@ -68,30 +70,12 @@ public class WarehouseApplicationServiceTest {
 
         createWarehouseCommandLocationNotCompleted = CreateWarehouseCommand.builder()
                 .name("sinar Jaya")
-                .location(WarehouseLocation.builder()
-                        .address("Street_1")
-                        .postalCode("100AB")
-                        .city("Paris")
-                        .build())
                 .build();
 
-//        Customer customer = new Customer();
-//        customer.setId(new CustomerId(CUSTOMER_ID));
-//        Seller sellerResponse = Seller.builder()
-//                .sellerId(new SellerId(createWarehouseCommand.getSellerId()))
-//                .products(List.of(new Product(new ProductId(PRODUCT_ID), "product-1",
-//                                new Money(new BigDecimal("50.00"))),
-//                        new Product(new ProductId(PRODUCT_ID), "product-2",
-//                                new Money(new BigDecimal("50.00")))))
-//                .active(true)
-//                .build();
-//        Order order = warehouseDataMapper.createOrderCommandToOrder(createWarehouseCommand);
-//        order.setId(new OrderId(ORDER_ID));
-//
-//        when(stockRepository.findCustomer(CUSTOMER_ID)).thenReturn(Optional.of(customer));
-//        when(userRepository.findSellerInformation(warehouseDataMapper.createOrderCommandToSeller(createWarehouseCommand)))
-//                .thenReturn(Optional.of(sellerResponse));
-//        when(warehouseRepository.save(any(Order.class))).thenReturn(order);
+        Warehouse warehouse = warehouseDataMapper.createWarehouseCommandToWarehouse(createWarehouseCommand);
+        warehouse.setId(new WarehouseId(WAREHOUSE_ID));
+
+        when(warehouseRepository.save(any(Warehouse.class))).thenReturn(warehouse);
     }
 
     @Test
@@ -104,20 +88,11 @@ public class WarehouseApplicationServiceTest {
     }
 
     @Test
-    public void testCreateOrderWithWrongTotalPrice() {
-        WarehouseDomainException orderDomainException = assertThrows(WarehouseDomainException.class,
+    public void testCreateOrderWithNullLocation() {
+        WarehouseDomainException warehouseDomainException = assertThrows(WarehouseDomainException.class,
                 () -> warehouseApplicationService.createWarehouse(createWarehouseCommandLocationNotCompleted));
-        assertEquals(orderDomainException.getMessage(),
-                "");
+        assertEquals(warehouseDomainException.getMessage(),
+                "Location must be set.");
     }
-//
-//    @Test
-//    public void testCreateOrderWithWrongProductPrice() {
-//        OrderDomainException orderDomainException = assertThrows(OrderDomainException.class,
-//                () -> warehouseApplicationService.createOrder(createWarehouseCommandWrongProductPrice));
-//        assertEquals(orderDomainException.getMessage(),
-//                "Order item price: 60.00 is not valid for product " + PRODUCT_ID);
-//    }
-
 
 }

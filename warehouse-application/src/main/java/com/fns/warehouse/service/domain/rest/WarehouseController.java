@@ -28,4 +28,12 @@ public class WarehouseController {
         log.info("Warehouse created");
         return ResponseEntity.ok(createWarehouseResponse);
     }
+
+    @PostMapping("/stock/transfer")
+    public ResponseEntity<CreateWarehouseResponse> stockTransferRequest(@RequestBody CreateWarehouseCommand createWarehouseCommand) {
+        log.info("Creating warehouse {} at {}", createWarehouseCommand.getName(), createWarehouseCommand.getLocation().getAddress());
+        CreateWarehouseResponse createWarehouseResponse = warehouseApplicationService.createWarehouse(createWarehouseCommand);
+        log.info("Warehouse created");
+        return ResponseEntity.ok(createWarehouseResponse);
+    }
 }
