@@ -1,5 +1,6 @@
 package com.fns.warehouse.service.domain;
 
+import com.fns.warehouse.service.domain.ports.output.message.publisher.StockRequestRequestMessagePublisher;
 import com.fns.warehouse.service.domain.ports.output.message.publisher.WarehouseCreatedRequestMessagePublisher;
 import com.fns.warehouse.service.domain.ports.output.message.publisher.WarehouseCreatedRequestMessagePublisher;
 import com.fns.warehouse.service.domain.ports.output.repository.StockRepository;
@@ -14,6 +15,11 @@ public class WarehouseTestConfiguration {
     @Bean
     public WarehouseCreatedRequestMessagePublisher warehouseCreatedRequestMessagePublisher(){
         return Mockito.mock(WarehouseCreatedRequestMessagePublisher.class);
+    }
+
+    @Bean
+    public StockRequestRequestMessagePublisher stockRequestRequestMessagePublisher(){
+        return Mockito.mock(StockRequestRequestMessagePublisher.class);
     }
 
     @Bean

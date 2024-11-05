@@ -74,4 +74,13 @@ API Endpoint:
 - Business Logic
   - update transfer status
   - determine transfer type. Enum (Auto, Manual)
-
+```json
+  {
+    "transfer_type": "manual",
+    "product_id": "uisnk-892-3289ndjsh",
+    "destination_warehouse_id": "sskajksa8923",
+    "source_warehouse_id": "jskksa",
+    "qty": 10
+  }
+ ```
+  

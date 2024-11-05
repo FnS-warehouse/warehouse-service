@@ -22,7 +22,11 @@
             <groupId>com.fns</groupId>
             <artifactId>common-domain</artifactId>
         </dependency>
-<!--        <dependency>-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <!--        <dependency>-->
 <!--            <groupId>com.fns</groupId>-->
 <!--            <artifactId>kafka-producer</artifactId>-->
 <!--        </dependency>-->

@@ -24,6 +24,7 @@ public interface WarehouseDomainService {
     StockUpdatedEvent updateStock(Stock stock, int quantityChange);
 
     StockTransferRequestedEvent requestStockTransfer(Stock sourceStock, Stock destinationStock, int quantity, TransferType transferType, DomainEventPublisher<StockTransferRequestedEvent> publisher) throws WarehouseDomainException;
+//    StockTransferRequestedEvent requestStockTransfer(Stock sourceStock, Stock destinationStock, int quantity, TransferType transferType) throws WarehouseDomainException;
 
     StockTransferApprovedEvent approveStockTransfer(Stock sourceStock, Stock destinationStock, int quantity, DomainEventPublisher<StockTransferApprovedEvent> publisher) throws WarehouseDomainException;
 

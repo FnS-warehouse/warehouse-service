@@ -1,17 +1,22 @@
 package com.fns.warehouse.service.domain;
 
 import com.fns.warehouse.service.domain.dto.create.CreateWarehouseCommand;
+import com.fns.warehouse.service.domain.dto.create.StockTransferCommand;
 import com.fns.warehouse.service.domain.entity.*;
 import com.fns.warehouse.service.domain.event.*;
+import com.fns.warehouse.service.domain.exception.StockException;
 import com.fns.warehouse.service.domain.exception.WarehouseDomainException;
 import com.fns.warehouse.service.domain.mapper.WarehouseDataMapper;
 //import com.fns.warehouse.service.domain.ports.output.message.publisher.WarehouseCreatedRequestMessagePublisher;
 //import com.fns.warehouse.service.domain.ports.output.repository.StockRepository;
+import com.fns.warehouse.service.domain.ports.output.message.publisher.StockRequestRequestMessagePublisher;
 import com.fns.warehouse.service.domain.ports.output.repository.WarehouseRepository;
 //import com.fns.warehouse.service.domain.ports.output.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 
 @Slf4j
@@ -23,12 +28,18 @@ public class WarehouseCreateHelper {
 
     private final WarehouseDataMapper warehouseDataMapper;
 
+    private final StockRequestRequestMessagePublisher stockRequestRequestMessagePublisher;
+
+
     public WarehouseCreateHelper(WarehouseDomainService warehouseDomainService,
                                  WarehouseRepository warehouseRepository,
-                                 WarehouseDataMapper warehouseDataMapper) {
+                                 WarehouseDataMapper warehouseDataMapper,
+                                 StockRequestRequestMessagePublisher stockRequestRequestMessagePublisher
+                                 ) {
         this.warehouseDomainService = warehouseDomainService;
         this.warehouseRepository = warehouseRepository;
         this.warehouseDataMapper = warehouseDataMapper;
+        this.stockRequestRequestMessagePublisher = stockRequestRequestMessagePublisher;
     }
 
     @Transactional
@@ -50,6 +61,30 @@ public class WarehouseCreateHelper {
         }
         log.info("Warehouse is saved with id: {}", warehouseResult.getId().getValue());
         return warehouseResult;
+    }
+
+    @Transactional
+    public StockTransferRequestedEvent requestedStockTransferEvent(StockTransferCommand stockTransferCommand) {
+        Stock sourceStock = getStock(stockTransferCommand.getSourceStockId());
+        Stock destinationStock = getStock(stockTransferCommand.getDestinationStockId());
+
+        StockTransferRequestedEvent stockTransferRequestedEvent = warehouseDomainService.requestStockTransfer(
+                sourceStock,destinationStock,
+                stockTransferCommand.getQty(),
+                stockTransferCommand.getTransferType(),
+                stockRequestRequestMessagePublisher);
+
+        log.info("Stock is requested with id: {}", stockTransferRequestedEvent.getEntity().getId().getValue());
+        return stockTransferRequestedEvent;
+    }
+
+    private Stock getStock(UUID stockId) {
+        Stock stockResult = warehouseRepository.getStock(stockId);
+        if (stockResult == null) {
+            log.error("Data not found");
+            throw new StockException("Data not found");
+        }
+        return stockResult;
     }
 
 }

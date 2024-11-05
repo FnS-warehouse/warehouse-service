@@ -5,6 +5,7 @@ import com.fns.warehouse.service.domain.dto.create.CreateWarehouseCommand;
 import com.fns.warehouse.service.domain.dto.create.CreateWarehouseResponse;
 import com.fns.warehouse.service.domain.dto.create.WarehouseLocation;
 //import com.fns.warehouse.service.domain.entity.User;
+import com.fns.warehouse.service.domain.entity.Stock;
 import com.fns.warehouse.service.domain.entity.Warehouse;
 import com.fns.warehouse.service.domain.exception.WarehouseDomainException;
 import com.fns.warehouse.service.domain.mapper.WarehouseDataMapper;
@@ -76,6 +77,7 @@ public class WarehouseApplicationServiceTest {
         warehouse.setId(new WarehouseId(WAREHOUSE_ID));
 
         when(warehouseRepository.save(any(Warehouse.class))).thenReturn(warehouse);
+        when(warehouseRepository.getStock(any(UUID.class))).thenReturn(Stock);
     }
 
     @Test
@@ -93,6 +95,16 @@ public class WarehouseApplicationServiceTest {
                 () -> warehouseApplicationService.createWarehouse(createWarehouseCommandLocationNotCompleted));
         assertEquals(warehouseDomainException.getMessage(),
                 "Location must be set.");
+    }
+
+
+    @Test
+    public void testStockTransferRequest(){
+        System.out.println(createWarehouseCommand.getName());
+        System.out.println(createWarehouseCommand.getLocation().getAddress());
+        CreateWarehouseResponse createWarehouseResponse = warehouseApplicationService.createWarehouse(createWarehouseCommand);
+        assertEquals(createWarehouseResponse.getWarehouseStatus(), WarehouseStatus.ACTIVE);
+        assertEquals(createWarehouseResponse.getMessage(), "Warehouse created successfully");
     }
 
 }

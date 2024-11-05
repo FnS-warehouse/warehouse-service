@@ -1,9 +1,9 @@
 package com.fns.warehouse.service.domain.mapper;
 
+import com.fns.domain.valueobject.ProductId;
 import com.fns.domain.valueobject.WarehouseId;
-import com.fns.warehouse.service.domain.dto.create.CreateWarehouseCommand;
-import com.fns.warehouse.service.domain.dto.create.CreateWarehouseResponse;
-import com.fns.warehouse.service.domain.dto.create.WarehouseLocation;
+import com.fns.warehouse.service.domain.dto.create.*;
+import com.fns.warehouse.service.domain.entity.Stock;
 import com.fns.warehouse.service.domain.entity.Warehouse;
 import com.fns.warehouse.service.domain.exception.WarehouseDomainException;
 import com.fns.warehouse.service.domain.valueobject.Location;
@@ -27,6 +27,20 @@ public class WarehouseDataMapper {
                 .message(message)
                 .build();
     }
+
+    public StockTransferResponse warehouseToCreateWarehouseResponse(Stock stock, String message) {
+        return StockTransferResponse.builder()
+                .transferStatus(stock.getTransferStatus())
+                .build();
+    }
+
+//    public Stock stockTransferCommandToStock(StockTransferCommand stockTransferCommand) {
+//        return Stock.builder()
+//                .warehouseId(new WarehouseId(stockTransferCommand.getDestinationWarehouseId()))
+//                .productId(new ProductId(stockTransferCommand.getStockId()))
+//                .reservedQuantity(stockTransferCommand.getQty())
+//                .build();
+//    }
 
 //    private List<User> usersToUserEntities(
 //        @NotNull List<com.fns.warehouse.service.domain.dto.create.User> users) {

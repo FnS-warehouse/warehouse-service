@@ -22,7 +22,7 @@
   <modules>
     <module>common</module>
     <module>warehouse-domain</module>
-<!--    <module>infrastructure</module>-->
+    <module>infrastructure</module>
     <module>warehouse-messaging</module>
     <module>warehouse-container</module>
     <module>warehouse-application</module>
